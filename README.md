@@ -15,7 +15,7 @@
     <img alt="Search" src="./assets/images/SearchBarScreenshot.JPG" src="./assets/video/SearchBarDemo.gif" width="100%"/>
 </p> -->
 
-Simple LinkedIn (/jobs/view) detail poster to Notion database
+Simple Chrome extension LinkedIn (/jobs/view) detail poster to Notion database
 
 ![React](https://img.shields.io/badge/-React-050B1E?&logo=React) ![TypeScript](https://img.shields.io/badge/-TypeScript-050B1E?&logo=TypeScript) ![Webpack](https://img.shields.io/badge/-Webpack.js-050B1E?&logo=webpack) ![TailwindCSS](https://img.shields.io/badge/-Tailwind_CSS-050B1E?&logo=tailwind-css)
 
@@ -25,6 +25,10 @@ Simple LinkedIn (/jobs/view) detail poster to Notion database
 
 <!-- -   [x] Add Changelog -->
 
+-   [ ] Fix form event (submit feedback)
+-   [ ] Add persistent state with local storage
+-   [ ] Fix types (remove any, provide streamlined interfaces)
+-   [ ] Fix Notion children blocks (markdown conversion)
 -   [ ] Active database picker
 -   [ ] Dynamic form fields based on selected database and page content
 -   [ ] Selector and Multiselector fields populated by database

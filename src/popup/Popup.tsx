@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 import Form from '@components/Form';
 import { browser } from 'webextension-polyfill-ts';
+// import parseHtmlToNotionBlocks from 'html-to-notion';
 import html2md from 'html-to-md';
 
 // Scripts to execute in current tab
-
 const initialPageData = {
   title: '',
   company: '',
@@ -36,6 +36,13 @@ const Popup = () => {
 
     setTimeout(() => {
       console.log('Submitting', pageData);
+      browser.runtime.sendMessage({
+        data: pageData,
+        type: 'popup',
+        post: true,
+      });
+      // console.log('MD to Blocks', markdownToBlocks(pageData.body));
+      // console.log('MD to Rich', markdownToRichText(pageData.body));
       setSubmitting(false);
     }, 3000);
   };

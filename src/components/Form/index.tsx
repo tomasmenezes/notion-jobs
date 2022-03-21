@@ -1,7 +1,6 @@
 import React from 'react';
 
-import parseHtmlToNotionBlocks from 'html-to-notion';
-import { markdownToBlocks, markdownToRichText } from '@tryfabric/martian';
+// import parseHtmlToNotionBlocks from 'html-to-notion';
 
 import { dataObject } from 'src/content';
 
@@ -17,7 +16,7 @@ interface dataProps {
 
 const Form = ({ data, title, event, submit }: dataProps) => {
   return (
-    <div className="flex flex-col bg-gray-50">
+    <div className="bg-gray-50 flex flex-col">
       {/* <div>{JSON.stringify(data)}</div> */}
       <div className="flex flex-col" id="forms">
         {/* Title */}
@@ -26,7 +25,7 @@ const Form = ({ data, title, event, submit }: dataProps) => {
             Title
             <input
               type="text"
-              className="mt-1 baseForm form-input"
+              className="baseForm form-input mt-1"
               placeholder="Job Title"
               value={data.title}
               onChange={e => {
@@ -52,7 +51,7 @@ const Form = ({ data, title, event, submit }: dataProps) => {
             Company
             <input
               type="text"
-              className="mt-1 baseForm form-input"
+              className="baseForm form-input mt-1"
               placeholder="Job Company"
               value={data.company || ''}
               onChange={e => {
@@ -67,7 +66,7 @@ const Form = ({ data, title, event, submit }: dataProps) => {
           <label className="block text-xs font-medium text-gray-900">
             Stage
             <select
-              className="mt-1 baseForm form-select"
+              className="baseForm form-select mt-1"
               placeholder="Application Stage"
               defaultValue={data.stage}
               onChange={e => {
@@ -87,7 +86,7 @@ const Form = ({ data, title, event, submit }: dataProps) => {
             Location
             <input
               type="text"
-              className="mt-1 baseForm form-input"
+              className="baseForm form-input mt-1"
               placeholder="Job Location"
               value={data.loc}
               onChange={e => {
@@ -102,7 +101,7 @@ const Form = ({ data, title, event, submit }: dataProps) => {
           <label className="block text-xs font-medium text-gray-900">
             Content
             <textarea
-              className="mt-1 prose baseForm form-textarea"
+              className="baseForm form-textarea mt-1 prose"
               placeholder="Job Content"
               value={data.body}
               onChange={e => {
@@ -119,7 +118,7 @@ const Form = ({ data, title, event, submit }: dataProps) => {
             Notes
             <input
               type="text"
-              className="mt-1 baseForm form-input"
+              className="baseForm form-input mt-1"
               placeholder="Job Notes"
               value={data.note}
               onChange={e => {
@@ -135,7 +134,7 @@ const Form = ({ data, title, event, submit }: dataProps) => {
             Tags
             <input
               type="text"
-              className="mt-1 baseForm form-input"
+              className="baseForm form-input mt-1"
               placeholder="Job Tags"
               value={data.jobType}
               onChange={e => {
@@ -159,7 +158,7 @@ const Form = ({ data, title, event, submit }: dataProps) => {
               {submit && (
                 <svg
                   role="status"
-                  className="inline w-4 h-4 mr-3 font-medium text-white animate-spin"
+                  className="animate-spin inline w-4 h-4 mr-3 font-medium text-white"
                   viewBox="0 0 100 101"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -189,7 +188,7 @@ const Form = ({ data, title, event, submit }: dataProps) => {
               {title.title ? (
                 <a
                   href={title.link}
-                  className="font-semibold text-pink-500 hover:underline"
+                  className="hover:underline font-semibold text-pink-500"
                   target="_blank"
                 >
                   {title.title}

@@ -1,32 +1,87 @@
 import { browser } from 'webextension-polyfill-ts';
 import { Client } from '@notionhq/client';
-import { GetDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
+// import { GetDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
+import { markdownToBlocks, markdownToRichText } from '@tryfabric/martian';
 import secrets from '../../secrets';
 
 const notion = new Client({ auth: secrets.NOTION_KEY });
 const databaseId = secrets.NOTION_DATABASE_ID;
 
-async function addItem(text: string, logoURL: string) {
+async function addItem(
+  title: string,
+  icon: string,
+  company: string,
+  stage: string,
+  loc: string,
+  tags: string,
+  body: string,
+  note: string,
+  link: string,
+) {
   try {
     const response = await notion.pages.create({
       parent: { database_id: databaseId },
       icon: {
         type: 'external',
         external: {
-          url: logoURL,
+          url: icon,
         },
       },
       properties: {
-        title: {
+        Title: {
           title: [
             {
               text: {
-                content: text,
+                content: title,
               },
             },
           ],
         },
+        Company: {
+          select: {
+            name: company,
+          },
+        },
+        Stage: {
+          select: {
+            name: stage,
+          },
+        },
+        Location: {
+          multi_select: [...loc.split(';').map(entry => ({ name: entry }))],
+        },
+        Tags: {
+          multi_select: [...tags.split(',').map(entry => ({ name: entry }))],
+        },
+        Notes: {
+          rich_text: [
+            {
+              text: {
+                content: note,
+              },
+            },
+          ],
+        },
+        'Posting URL': {
+          url: link,
+        },
       },
+      children: [
+        ...body.split(/\r?\n/).map(item => ({
+          object: 'block',
+          type: 'paragraph',
+          paragraph: {
+            rich_text: [
+              {
+                type: 'text',
+                text: {
+                  content: item,
+                },
+              },
+            ],
+          },
+        })),
+      ],
     });
     console.log(response);
     console.log('Success! Entry added.');
@@ -57,7 +112,8 @@ browser.runtime.onMessage.addListener(
     popupMounted?: boolean;
     type?: string;
     query?: boolean;
-    data?: object;
+    data?: any;
+    post?: boolean;
   }) => {
     // Log statement if request.popupMounted is true
     // NOTE: this request is sent in `popup/component.tsx`
@@ -83,6 +139,23 @@ browser.runtime.onMessage.addListener(
             queryTitle: dbTitle,
           }),
         );
+
+      if (request.data && request.post) {
+        console.log('Post data to DB');
+        console.log(markdownToBlocks(request.data.body));
+        console.log(markdownToRichText(request.data.body));
+        addItem(
+          request.data.title,
+          request.data.icon,
+          request.data.company,
+          request.data.stage,
+          request.data.loc,
+          request.data.jobType,
+          request.data.body,
+          request.data.note,
+          request.data.link,
+        );
+      }
 
       // if (request.data) {
       //   console.log(request.data);
