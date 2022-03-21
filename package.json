@@ -1,6 +1,6 @@
 {
-  "name": "web-extension-ts-starter",
-  "description": "Web Extension Starter",
+  "name": "linkedin-notion-job-connector",
+  "description": "LinkedIn job Notion database connector",
   "version": "1.0.0",
   "main": "server.ts",
   "directories": {
@@ -33,6 +33,12 @@
     "prettify": "prettier --write \"src/**/*.ts*\""
   },
   "dependencies": {
+    "@headlessui/react": "^0.0.0-insiders.2dbc38c",
+    "@notionhq/client": "^1.0.4",
+    "@tryfabric/martian": "^1.1.1",
+    "html-to-md": "^0.5.7",
+    "html-to-notion": "^0.2.1",
+    "process": "^0.11.10",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },
@@ -40,12 +46,16 @@
     "@babel/core": "^7.16.7",
     "@babel/preset-env": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
+    "@tailwindcss/forms": "^0.5.0",
+    "@tailwindcss/typography": "^0.5.2",
     "@types/chrome": "^0.0.174",
+    "@types/draft-js": "^0.11.9",
     "@types/eslint": "^8.2.1",
     "@types/jest": "^27.4.0",
     "@types/node": "^17.0.8",
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
+    "@types/react-draft-wysiwyg": "^1.13.4",
     "@types/react-test-renderer": "^17.0.1",
     "@types/webextension-polyfill": "^0.8.2",
     "@typescript-eslint/eslint-plugin": "^5.9.0",

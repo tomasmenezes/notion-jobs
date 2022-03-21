@@ -1,11 +1,27 @@
+# dependencies
+/node_modules
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.history
+/src/api/data/dictionaries
+/src/prisma/migrations
 /dist
 /.idea
-/coverage
-/node_modules
-.DS_Store
-.env*
 logs
+/original
 
-src/api/data/dictionaries
-
-/src/prisma/migrations
+# secrets
+secrets.*.js
+secrets.js
+secrets.ts

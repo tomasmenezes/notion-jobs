@@ -1,26 +1,27 @@
 {
-    "manifest_version": 2,
-    "name": "Web Extension Starter",
-    "description": "A Web Extension starter kit",
-    "version": "1.0.0",
-    "browser_action": {
-        "default_icon": "icon-16.png",
-        "default_popup": "popup.html"
-    },
-    "background": {
-        "scripts": ["js/background.bundle.js"],
-        "persistent": false
-    },
-    "content_scripts": [{
-      "matches": ["http://*/", "https://*/"],
-        "js": [
-          "js/content-script.bundle.js"
-        ]
-    }],
-    "icons": {
-        "16": "icon-16.png",
-        "48": "icon-48.png",
-        "128": "icon-128.png"
-    },
-    "permissions": ["tabs", "activeTab", "notifications", "http://*/", "https://*/"]
+  "manifest_version": 3,
+  "name": "LinkedIn Notion Job Connector",
+  "description": "Quickly add LinkedIn jobs to Notion databases",
+  "version": "1.0.0",
+  "action": {
+    "default_icon": "icon-16.png",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "js/background.bundle.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.linkedin.com/jobs/view/*"],
+      "js": ["js/content-script.bundle.js"]
+    }
+  ],
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  },
+  "permissions": ["tabs", "activeTab", "notifications", "storage"],
+  "host_permissions": ["https://api.notion.com/*"]
 }

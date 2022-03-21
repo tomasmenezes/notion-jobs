@@ -6,5 +6,5 @@ import Popup from './Popup';
 import '../styles/app.css';
 
 browser.tabs.query({ active: true, currentWindow: true }).then(() => {
-    ReactDOM.render(<Popup />, document.getElementById('popup'));
+  ReactDOM.render(<Popup />, document.getElementById('popup'));
 });
