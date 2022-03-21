@@ -18,8 +18,12 @@
 /src/prisma/migrations
 /dist
 /.idea
-logs
 /original
+/tests
+/hooks
+logs
+.github
+.vscode
 
 # secrets
 secrets.*.js
