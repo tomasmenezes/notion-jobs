@@ -24,6 +24,7 @@
 logs
 .github
 .vscode
+Dockerfile
 
 # secrets
 secrets.*.js
