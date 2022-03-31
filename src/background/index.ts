@@ -83,10 +83,21 @@ async function addItem(
         })),
       ],
     });
+
     console.log(response);
     console.log('Success! Entry added.');
+    browser.runtime.sendMessage({
+      type: 'background',
+      add: true,
+      message: 'Success',
+    });
   } catch (error) {
     console.error(error);
+    browser.runtime.sendMessage({
+      type: 'background',
+      add: false,
+      message: error,
+    });
   }
 }
 
