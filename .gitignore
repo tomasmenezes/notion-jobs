@@ -13,18 +13,26 @@
 .env.development.local
 .env.test.local
 .env.production.local
+.env
+.yarn
 .history
+.github
+.vscode
+.prettierignore
+.prettierrc.js
+.gitattributes
+.dockerignore
+/.idea
 /src/api/data/dictionaries
 /src/prisma/migrations
 /dist
-/.idea
 /original
 /tests
 /hooks
-logs
-.github
-.vscode
+/src/popup/backup
+/assets
 Dockerfile
+logs
 
 # secrets
 secrets.*.js

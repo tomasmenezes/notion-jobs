@@ -1,94 +1,92 @@
 import { browser } from 'webextension-polyfill-ts';
 
-console.log('Logging from content script');
+import { RequestMessage } from 'src/popup/Popup';
 
-export interface dataObject {
-  title?: string;
-  company?: string;
-  icon?: string;
-  body?: string;
-  link?: string;
-  loc?: string;
-  note?: string;
-  jobType?: string;
-  stage?: string;
+export interface DataObject {
+  title: string;
+  company: string;
+  icon: string;
+  body: string;
+  link: string;
+  loc: string;
+  note: string;
+  jobType: string;
+  stage: string;
+  tags: string;
 }
 
+export const defaultData: DataObject = {
+  title: '',
+  company: '',
+  icon: '',
+  body: '',
+  link: '',
+  loc: '',
+  note: '',
+  jobType: '',
+  stage: '',
+  tags: '',
+};
+
 // Listen for messages sent from popup
-browser.runtime.onMessage.addListener((request: { getPageData: boolean }) => {
+browser.runtime.onMessage.addListener((request: RequestMessage) => {
   if (request.getPageData) {
-    // Data Generator
-    const title = (<HTMLElement>(
-      document.querySelector('.topcard__title')
-    )).innerText.trim();
+    const pageData = defaultData;
+    try {
+      // Data Generator
+      pageData.title = (<HTMLElement>(
+        document.querySelector('.topcard__title')
+      )).innerText.trim();
 
-    const company = (<HTMLElement>(
-      document.querySelector('.topcard__org-name-link ')
-    )).innerText.trim();
+      pageData.company = (<HTMLElement>(
+        document.querySelector('.topcard__org-name-link ')
+      )).innerText.trim();
 
-    const logo = <HTMLImageElement>(
-      document.querySelector('.artdeco-entity-image--square-5')
-    );
+      const logo = <HTMLImageElement>(
+        document.querySelector('.artdeco-entity-image--square-5')
+      );
+      if (!logo.src) {
+        pageData.icon = logo.getAttribute('data-delayed-url') ?? '';
+      } else {
+        pageData.icon = logo.src;
+      }
 
-    let icon;
-    if (!logo.src) {
-      icon = logo.getAttribute('data-delayed-url') ?? '';
-    } else {
-      icon = logo.src;
+      pageData.body =
+        (<HTMLElement>(
+          document.querySelector('.show-more-less-html__markup')
+        )).innerHTML.trim() || '';
+
+      pageData.link = document.baseURI;
+
+      pageData.loc = (<HTMLElement>(
+        document.querySelector('.topcard__flavor--bullet')
+      )).innerText.trim();
+
+      const postTime = (<HTMLElement>(
+        document.querySelector('.posted-time-ago__text')
+      )).innerText.trim();
+
+      const numApps = (<HTMLElement>(
+        document.querySelector('.num-applicants__caption')
+      )).innerText.trim();
+
+      const senLevel = (<HTMLElement>(
+        document.querySelectorAll('.description__job-criteria-text')[0]
+      )).innerText.trim();
+
+      pageData.note = `Posted ${postTime}, ${numApps}${
+        senLevel !== 'Not Applicable' ? `, ${senLevel}` : ''
+      }`;
+
+      pageData.jobType = (<HTMLElement>(
+        document.querySelectorAll('.description__job-criteria-text')[1]
+      )).innerText.trim();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      // Relay data to extension
+      console.log('Getting data from content', pageData);
+      browser.runtime.sendMessage({ data: pageData, type: 'content' });
     }
-
-    const body =
-      (<HTMLElement>(
-        document.querySelector('.show-more-less-html__markup')
-      )).innerHTML.trim() || '';
-
-    const link = document.baseURI;
-
-    const loc = (<HTMLElement>(
-      document.querySelector('.topcard__flavor--bullet')
-    )).innerText.trim();
-
-    // const note = `Posted ${(<HTMLElement>(
-    //   (<HTMLElement>document.querySelector('.posted-time-ago__text'))
-    //     .parentElement
-    // )).innerText
-    //   .split('ago')
-    //   .map(field => field.trim())
-    //   .join(', ')}`;
-
-    const postTime = (<HTMLElement>(
-      document.querySelector('.posted-time-ago__text')
-    )).innerText.trim();
-
-    const numApps = (<HTMLElement>(
-      document.querySelector('.num-applicants__caption')
-    )).innerText.trim();
-
-    const senLevel = (<HTMLElement>(
-      document.querySelectorAll('.description__job-criteria-text')[0]
-    )).innerText.trim();
-
-    const note = `Posted ${postTime}, ${numApps}${
-      senLevel !== 'Not Applicable' ? `, ${senLevel}` : ''
-    }`;
-
-    const jobType = (<HTMLElement>(
-      document.querySelectorAll('.description__job-criteria-text')[1]
-    )).innerText.trim();
-
-    const data: dataObject = {
-      title,
-      company,
-      icon,
-      body,
-      link,
-      loc,
-      note,
-      jobType,
-    };
-
-    // Relay data to extension
-    console.log('Getting data from content', data);
-    browser.runtime.sendMessage({ data, type: 'content' });
   }
 });

@@ -1,32 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, BlockquoteHTMLAttributes } from 'react';
+import { browser } from 'webextension-polyfill-ts';
+import toast, { Toaster } from 'react-hot-toast';
+import html2md from 'html-to-md';
 
 import Form from '@components/Form';
-import { browser } from 'webextension-polyfill-ts';
-import html2md from 'html-to-md';
-import toast, { Toaster } from 'react-hot-toast';
-// import parseHtmlToNotionBlocks from 'html-to-notion';
+
+import { DataObject, defaultData } from 'src/content';
 
 // Scripts to execute in current tab
-const initialPageData = {
-  title: '',
-  company: '',
-  icon: '',
-  body: '',
-  link: '',
-  loc: '',
-  note: '',
-  jobType: '',
+export const initialPageData: DataObject = {
+  ...defaultData,
   stage: 'Check',
 };
 
-const initialDbTitle = {
+export interface QueryObject {
+  title: string;
+  link: string;
+}
+
+export const initialDbInfo: QueryObject = {
   title: '',
   link: '',
 };
 
+export interface RequestMessage {
+  type: string;
+  popupMounted?: boolean;
+  query?: boolean;
+  postData?: boolean;
+  dataPosted?: boolean;
+  getPageData?: boolean;
+  data?: DataObject;
+  queryInfo?: any;
+  postMessage?: string | unknown;
+}
+
 const Popup = () => {
   const [pageData, setPageData] = useState(initialPageData);
-  const [dbTitle, setDbTitle]: [any, any] = useState(initialDbTitle);
+  const [dbInfo, setDbInfo] = useState(initialDbInfo);
   const [submitting, setSubmitting] = useState(false);
   const [submit, setSubmit] = useState(true);
   const [add, setAdd] = useState(false);
@@ -42,22 +53,10 @@ const Popup = () => {
 
     console.log('Submitting', pageData);
     browser.runtime.sendMessage({
-      data: pageData,
       type: 'popup',
-      post: true,
+      data: pageData,
+      postData: true,
     });
-
-    // setTimeout(() => {
-    //   console.log('Submitting', pageData);
-    //   browser.runtime.sendMessage({
-    //     data: pageData,
-    //     type: 'popup',
-    //     post: true,
-    //   });
-    //   console.log('MD to Blocks', markdownToBlocks(pageData.body));
-    //   console.log('MD to Rich', markdownToRichText(pageData.body));
-    //   setSubmitting(false);
-    // }, 3000);
   };
 
   useEffect(() => {
@@ -69,67 +68,57 @@ const Popup = () => {
     browser.tabs.query({ currentWindow: true, active: true }).then(tabs => {
       const activeTab = tabs[0];
       if (activeTab.id) {
-        browser.tabs.sendMessage(activeTab.id, { getPageData: true });
+        browser.tabs.sendMessage(activeTab.id, {
+          type: 'popup',
+          getPageData: true,
+        });
         console.log('Data Request: Popup -> Content');
       }
     });
 
     // Get data response from content
-    browser.runtime.onMessage.addListener(
-      (request: {
-        data?: any;
-        type?: string;
-        query?: boolean;
-        queryTitle?: object;
-        add?: boolean;
-        message?: any;
-      }) => {
-        // Message from content
-        if (request.type === 'content')
-          console.log('Message: Content -> Popup');
+    browser.runtime.onMessage.addListener((request: RequestMessage): void => {
+      // Retrieve scraped data from content
+      if (request.data) {
+        setPageData({
+          ...pageData,
+          title: request.data.title,
+          company: request.data.company,
+          icon: request.data.icon,
+          body: html2md(request.data.body),
+          link: request.data.link,
+          loc: request.data.loc,
+          note: request.data.note,
+          jobType:
+            request.data.jobType === 'Internship' ? request.data.jobType : '',
+        });
+        console.log('Data: Content -> Popup', pageData);
+        // addItem(request.data.title, request.data.icon);
+      }
 
-        // Retrieve scraped data from content
-        if (request.data) {
-          setPageData({
-            ...pageData,
-            title: request.data.title,
-            company: request.data.company,
-            icon: request.data.icon,
-            body: html2md(request.data.body),
-            link: request.data.link,
-            loc: request.data.loc,
-            note: request.data.note,
-            jobType:
-              request.data.jobType === 'Internship' ? request.data.jobType : '',
-          });
-          console.log('Data: Content -> Popup', pageData);
-          // addItem(request.data.title, request.data.icon);
+      // Retrieve DB Title from background
+      if (request.type === 'background' && request.queryInfo) {
+        console.log('DB Query Title: Background -> Popup');
+        setDbInfo(request.queryInfo);
+      }
+
+      // Retrieve post data status
+      if (request.type === 'background' && request.postMessage) {
+        setSubmitting(false);
+
+        if (request.dataPosted) {
+          console.log('Entry added successfully!');
+          console.log('TOAST SUCCESS');
+          toast.success('Entry Added!');
+          setAdd(true);
+        } else {
+          console.log(request.postMessage);
+          console.log('TOAST ERROR');
+          toast.error('Error!');
+          setSubmit(true);
         }
-
-        // Retrieve DB Title from background
-        if (request.type === 'background' && request.queryTitle) {
-          console.log('DB Query Title: Background -> Popup');
-          setDbTitle(request.queryTitle);
-        }
-
-        // Retrieve post data status
-        if (request.type === 'background' && request.message) {
-          setSubmitting(false);
-
-          if (request.add) {
-            console.log('Entry added successfully!');
-            console.log('TOAST SUCCESS');
-            toast.success('Entry Added!');
-            setAdd(true);
-          } else {
-            console.log(request.message);
-            console.log('TOAST ERROR');
-            toast.error('Error!');
-            setSubmit(true);
-          }
-        }
-      },
-    );
+      }
+    });
   }, []);
 
   // Renders the component tree
@@ -139,7 +128,7 @@ const Popup = () => {
       <div className="w-full h-full mx-5 my-5">
         <Form
           data={pageData}
-          title={dbTitle}
+          title={dbInfo}
           event={{
             setPageData,
             handleReset,

@@ -1,4 +1,4 @@
-<div id="top"></div>
+<!-- <div id="top"></div> -->
 
 <!-- PROJECT LOGO -->
 <!-- <br />
@@ -9,7 +9,7 @@
 
 <!-- ABOUT THE PROJECT -->
 
-## Notion Job Connector 
+# Notion Job Connector
 
 <!-- <p align="center">
     <img alt="Search" src="./assets/images/SearchBarScreenshot.JPG" src="./assets/video/SearchBarDemo.gif" width="100%"/>
@@ -27,16 +27,15 @@ Simple Chrome extension LinkedIn (/jobs/view) detail poster to Notion database
 
 <!-- -   [x] Add Changelog -->
 
--   [ ] Fix empty field submit
--   [ ] Fix form event (submit feedback)
--   [ ] Add persistent state with local storage
--   [ ] Fix types (remove any, provide streamlined interfaces)
--   [ ] Fix Notion children blocks (markdown conversion)
--   [ ] Active database picker
--   [ ] Dynamic form fields based on selected database and page content
--   [ ] Selector and Multiselector fields populated by database
--   [ ] Additional supported content besides linkedin.com/jobs/view/ entries
-
+- [ ] Fix empty field submit
+- [ ] Fix form event (submit feedback)
+- [ ] Add persistent state with local storage
+- [ ] Fix types (remove any, provide streamlined interfaces)
+- [ ] Fix Notion children blocks (markdown conversion)
+- [ ] Active database picker
+- [ ] Dynamic form fields based on selected database and page content
+- [ ] Selector and Multiselector fields populated by database
+- [ ] Additional supported content besides linkedin.com/jobs/view/ entries
 
 <!-- LICENSE -->
 
@@ -48,4 +47,4 @@ Simple Chrome extension LinkedIn (/jobs/view) detail poster to Notion database
 
 ## Acknowledgments
 
--   Based on [Web Extension Starter](https://github.com/BCIT-DDC/gh-octiconify)
+- Based on [Web Extension Starter](https://github.com/BCIT-DDC/gh-octiconify)

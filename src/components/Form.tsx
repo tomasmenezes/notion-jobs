@@ -1,11 +1,9 @@
 import React from 'react';
 
-// import parseHtmlToNotionBlocks from 'html-to-notion';
+import { DataObject } from 'src/content';
 
-import { dataObject } from 'src/content';
-
-interface dataProps {
-  data: dataObject;
+interface FormProps {
+  data: DataObject;
   title: {
     title: string;
     link: string;
@@ -14,7 +12,7 @@ interface dataProps {
   submit: boolean;
 }
 
-const Form = ({ data, title, event, submit }: dataProps) => {
+const Form = ({ data, title, event, submit }: FormProps) => {
   return (
     <div className="bg-gray-50 flex flex-col">
       {/* <div>{JSON.stringify(data)}</div> */}

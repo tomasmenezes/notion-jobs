@@ -1,23 +1,25 @@
 import { browser } from 'webextension-polyfill-ts';
 import { Client } from '@notionhq/client';
-// import { GetDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 import { markdownToBlocks, markdownToRichText } from '@tryfabric/martian';
+
+import { DataObject } from 'src/content';
+import { QueryObject, RequestMessage, initialDbInfo } from 'src/popup/Popup';
 import secrets from '../../secrets';
 
 const notion = new Client({ auth: secrets.NOTION_KEY });
 const databaseId = secrets.NOTION_DATABASE_ID;
 
-async function addItem(
-  title: string,
-  icon: string,
-  company: string,
-  stage: string,
-  loc: string,
-  tags: string,
-  body: string,
-  note: string,
-  link: string,
-) {
+async function addItem({
+  title,
+  icon,
+  company,
+  stage,
+  loc,
+  body,
+  note,
+  link,
+  tags,
+}: DataObject): Promise<void> {
   try {
     const response = await notion.pages.create({
       parent: { database_id: databaseId },
@@ -88,26 +90,26 @@ async function addItem(
     console.log('Success! Entry added.');
     browser.runtime.sendMessage({
       type: 'background',
-      add: true,
-      message: 'Success',
+      dataPosted: true,
+      postMessage: 'Success',
     });
   } catch (error) {
     console.error(error);
     browser.runtime.sendMessage({
       type: 'background',
-      add: false,
-      message: error,
+      dataPosted: false,
+      postMessage: error,
     });
   }
 }
 
-const queryDB = async () => {
+const queryDB = async (): Promise<QueryObject> => {
   const response = await notion.databases.retrieve({
     database_id: databaseId,
   });
   console.log(response);
 
-  let query = {};
+  let query = initialDbInfo;
   if ('title' in response) {
     query = { title: response.title[0]?.plain_text, link: response.url };
   }
@@ -118,61 +120,41 @@ console.log(notion);
 console.log(databaseId);
 
 // Listen for messages sent from other parts of the extension
-browser.runtime.onMessage.addListener(
-  (request: {
-    popupMounted?: boolean;
-    type?: string;
-    query?: boolean;
-    data?: any;
-    post?: boolean;
-  }) => {
-    // Log statement if request.popupMounted is true
-    // NOTE: this request is sent in `popup/component.tsx`
-    if (request.popupMounted) {
-      console.log('Mount: Popup -> Background');
+browser.runtime.onMessage.addListener((request: RequestMessage): void => {
+  if (request.popupMounted) {
+    console.log('Mount: Popup -> Background');
+  }
+
+  if (request.type === 'content') {
+    console.log('Message: Content -> Background');
+  }
+
+  if (request.type === 'popup') {
+    console.log('Message: Popup -> Background');
+    if (request.query)
+      queryDB().then(dbInfo =>
+        browser.runtime.sendMessage({
+          type: 'background',
+          queryInfo: dbInfo,
+        }),
+      );
+
+    if (request.data && request.postData) {
+      console.log('Post data to DB');
+      console.log(markdownToBlocks(request.data.body));
+      console.log(markdownToRichText(request.data.body));
+      addItem({
+        title: request.data.title,
+        icon: request.data.icon,
+        company: request.data.company,
+        stage: request.data.stage,
+        loc: request.data.loc,
+        jobType: request.data.jobType,
+        body: request.data.body,
+        note: request.data.note,
+        link: request.data.link,
+        tags: request.data.tags,
+      });
     }
-
-    if (request.type === 'content') {
-      console.log('Message: Content -> Background');
-      // if (request.data) {
-      //   console.log(request.data);
-      // sendResponse({ status: 200 });
-      // addItem(request.data.title, request.data.icon); }
-    }
-
-    if (request.type === 'popup') {
-      console.log('Message: Popup -> Background');
-      if (request.query)
-        queryDB().then(dbTitle =>
-          browser.runtime.sendMessage({
-            type: 'background',
-            query: true,
-            queryTitle: dbTitle,
-          }),
-        );
-
-      if (request.data && request.post) {
-        console.log('Post data to DB');
-        console.log(markdownToBlocks(request.data.body));
-        console.log(markdownToRichText(request.data.body));
-        addItem(
-          request.data.title,
-          request.data.icon,
-          request.data.company,
-          request.data.stage,
-          request.data.loc,
-          request.data.jobType,
-          request.data.body,
-          request.data.note,
-          request.data.link,
-        );
-      }
-
-      // if (request.data) {
-      //   console.log(request.data);
-      //   // sendResponse({ status: 200 });
-      //   // addItem(request.data.title, request.data.icon);
-      // }
-    }
-  },
-);
+  }
+});
