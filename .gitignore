@@ -20,17 +20,14 @@
 .vscode
 .prettierignore
 .prettierrc.js
-.gitattributes
 .dockerignore
+.gitattributes
 /.idea
-/src/api/data/dictionaries
-/src/prisma/migrations
 /dist
 /original
 /tests
 /hooks
-/src/popup/backup
-/assets
+/backup
 Dockerfile
 logs
 

@@ -1,6 +1,6 @@
 import { browser } from 'webextension-polyfill-ts';
 
-import { RequestMessage } from 'src/popup/Popup';
+import { RequestMessage } from '../popup/Popup';
 
 export interface DataObject {
   title: string;
@@ -10,9 +10,8 @@ export interface DataObject {
   link: string;
   loc: string;
   note: string;
-  jobType: string;
-  stage: string;
   tags: string;
+  stage: string;
 }
 
 export const defaultData: DataObject = {
@@ -23,15 +22,15 @@ export const defaultData: DataObject = {
   link: '',
   loc: '',
   note: '',
-  jobType: '',
-  stage: '',
   tags: '',
+  stage: '',
 };
 
 // Listen for messages sent from popup
 browser.runtime.onMessage.addListener((request: RequestMessage) => {
   if (request.getPageData) {
-    const pageData = defaultData;
+    const pageData = { ...defaultData };
+    console.log('Content data fetch', defaultData);
     try {
       // Data Generator
       pageData.title = (<HTMLElement>(
@@ -78,9 +77,10 @@ browser.runtime.onMessage.addListener((request: RequestMessage) => {
         senLevel !== 'Not Applicable' ? `, ${senLevel}` : ''
       }`;
 
-      pageData.jobType = (<HTMLElement>(
+      pageData.tags = (<HTMLElement>(
         document.querySelectorAll('.description__job-criteria-text')[1]
       )).innerText.trim();
+      console.log('Content data fetch', pageData);
     } catch (error) {
       console.log(error);
     } finally {

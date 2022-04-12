@@ -1,11 +1,11 @@
-import React, { useState, useEffect, BlockquoteHTMLAttributes } from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 import { browser } from 'webextension-polyfill-ts';
 import toast, { Toaster } from 'react-hot-toast';
 import html2md from 'html-to-md';
 
 import Form from '@components/Form';
 
-import { DataObject, defaultData } from 'src/content';
+import { DataObject, defaultData } from '../content';
 
 // Scripts to execute in current tab
 export const initialPageData: DataObject = {
@@ -31,7 +31,7 @@ export interface RequestMessage {
   dataPosted?: boolean;
   getPageData?: boolean;
   data?: DataObject;
-  queryInfo?: any;
+  queryInfo?: QueryObject;
   postMessage?: string | unknown;
 }
 
@@ -39,17 +39,14 @@ const Popup = () => {
   const [pageData, setPageData] = useState(initialPageData);
   const [dbInfo, setDbInfo] = useState(initialDbInfo);
   const [submitting, setSubmitting] = useState(false);
-  const [submit, setSubmit] = useState(true);
-  const [add, setAdd] = useState(false);
 
   const handleReset = () => {
     setPageData(initialPageData);
   };
 
-  const handleSubmit = () => {
-    // event.preventDefault();
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
     setSubmitting(true);
-    setSubmit(false);
 
     console.log('Submitting', pageData);
     browser.runtime.sendMessage({
@@ -89,11 +86,9 @@ const Popup = () => {
           link: request.data.link,
           loc: request.data.loc,
           note: request.data.note,
-          jobType:
-            request.data.jobType === 'Internship' ? request.data.jobType : '',
+          tags: request.data.tags === 'Internship' ? request.data.tags : '',
         });
         console.log('Data: Content -> Popup', pageData);
-        // addItem(request.data.title, request.data.icon);
       }
 
       // Retrieve DB Title from background
@@ -110,18 +105,15 @@ const Popup = () => {
           console.log('Entry added successfully!');
           console.log('TOAST SUCCESS');
           toast.success('Entry Added!');
-          setAdd(true);
         } else {
           console.log(request.postMessage);
           console.log('TOAST ERROR');
-          toast.error('Error!');
-          setSubmit(true);
+          toast.error('Error submitting entry!');
         }
       }
     });
   }, []);
 
-  // Renders the component tree
   return (
     <div className="popupContainer">
       <Toaster position="bottom-center" />

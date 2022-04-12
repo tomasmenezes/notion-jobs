@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { DataObject } from 'src/content';
+import { DataObject } from '../content';
 
 interface FormProps {
   data: DataObject;
@@ -16,7 +16,7 @@ const Form = ({ data, title, event, submit }: FormProps) => {
   return (
     <div className="bg-gray-50 flex flex-col">
       {/* <div>{JSON.stringify(data)}</div> */}
-      <div className="flex flex-col" id="forms">
+      <form className="flex flex-col" id="forms" onSubmit={event.handleSubmit}>
         {/* Title */}
         <div className="flex items-center justify-between mb-2">
           <label className="flex-grow block text-xs font-medium text-gray-900">
@@ -55,6 +55,7 @@ const Form = ({ data, title, event, submit }: FormProps) => {
               onChange={e => {
                 event.setPageData({ ...data, company: e.target.value });
               }}
+              required
             />
           </label>
         </div>
@@ -134,9 +135,9 @@ const Form = ({ data, title, event, submit }: FormProps) => {
               type="text"
               className="baseForm form-input mt-1"
               placeholder="Job Tags"
-              value={data.jobType}
+              value={data.tags}
               onChange={e => {
-                event.setPageData({ ...data, jobType: e.target.value });
+                event.setPageData({ ...data, tags: e.target.value });
               }}
             />
           </label>
@@ -149,9 +150,10 @@ const Form = ({ data, title, event, submit }: FormProps) => {
         >
           <div className="flex space-x-2">
             <button
-              onClick={event.handleSubmit}
-              type="button"
+              // onClick={event.handleSubmit}
+              type="submit"
               className="inline-flex items-center px-3 py-1.5 mr-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-blue-500 focus:border-blue-500 focus:ring-2"
+              disabled={submit}
             >
               {submit && (
                 <svg
@@ -214,7 +216,7 @@ const Form = ({ data, title, event, submit }: FormProps) => {
             </p>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 };

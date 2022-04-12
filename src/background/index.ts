@@ -2,8 +2,8 @@ import { browser } from 'webextension-polyfill-ts';
 import { Client } from '@notionhq/client';
 import { markdownToBlocks, markdownToRichText } from '@tryfabric/martian';
 
-import { DataObject } from 'src/content';
-import { QueryObject, RequestMessage, initialDbInfo } from 'src/popup/Popup';
+import { DataObject } from '../content';
+import { QueryObject, RequestMessage, initialDbInfo } from '../popup/Popup';
 import secrets from '../../secrets';
 
 const notion = new Client({ auth: secrets.NOTION_KEY });
@@ -21,6 +21,8 @@ async function addItem({
   tags,
 }: DataObject): Promise<void> {
   try {
+    console.log(body);
+
     const response = await notion.pages.create({
       parent: { database_id: databaseId },
       icon: {
@@ -49,41 +51,52 @@ async function addItem({
             name: stage,
           },
         },
-        Location: {
-          multi_select: [...loc.split(';').map(entry => ({ name: entry }))],
-        },
-        Tags: {
-          multi_select: [...tags.split(',').map(entry => ({ name: entry }))],
-        },
-        Notes: {
-          rich_text: [
-            {
-              text: {
-                content: note,
-              },
-            },
-          ],
-        },
-        'Posting URL': {
-          url: link,
-        },
-      },
-      children: [
-        ...body.split(/\r?\n/).map(item => ({
-          object: 'block',
-          type: 'paragraph',
-          paragraph: {
+        ...(loc && {
+          Location: {
+            multi_select: [
+              ...loc
+                .replaceAll(',', '')
+                .split(';')
+                .map(entry => ({ name: entry })),
+            ],
+          },
+        }),
+        ...(tags && {
+          Tags: {
+            multi_select: [...tags.split(',').map(entry => ({ name: entry }))],
+          },
+        }),
+        ...(note && {
+          Notes: {
             rich_text: [
               {
-                type: 'text',
                 text: {
-                  content: item,
+                  content: note,
                 },
               },
             ],
           },
-        })),
-      ],
+        }),
+        'Posting URL': {
+          url: link,
+        },
+      },
+      // children: [
+      //   ...body.split(/\r?\n/).map(item => ({
+      //     object: 'block',
+      //     type: 'paragraph',
+      //     paragraph: {
+      //       rich_text: [
+      //         {
+      //           type: 'text',
+      //           text: {
+      //             content: item,
+      //           },
+      //         },
+      //       ],
+      //     },
+      //   })),
+      // ],
     });
 
     console.log(response);
@@ -149,11 +162,10 @@ browser.runtime.onMessage.addListener((request: RequestMessage): void => {
         company: request.data.company,
         stage: request.data.stage,
         loc: request.data.loc,
-        jobType: request.data.jobType,
+        tags: request.data.tags,
         body: request.data.body,
         note: request.data.note,
         link: request.data.link,
-        tags: request.data.tags,
       });
     }
   }

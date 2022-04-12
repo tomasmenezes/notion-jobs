@@ -22,8 +22,7 @@
     "Brave",
     "React"
   ],
-  "author": "BCIT-DDC",
-  "license": "GNUV3",
+  "author": "Tomás Menezes Pereira",
   "scripts": {
     "build": "npm run clean && webpack --config webpack/webpack.prod.js",
     "clean": "rimraf dist/",
