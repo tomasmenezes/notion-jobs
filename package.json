@@ -34,7 +34,7 @@
   "dependencies": {
     "@headlessui/react": "^0.0.0-insiders.2dbc38c",
     "@notionhq/client": "^1.0.4",
-    "@tryfabric/martian": "^1.1.1",
+    "@tryfabric/martian": "^1.2.0",
     "html-to-md": "^0.5.7",
     "html-to-notion": "^0.2.1",
     "process": "^0.11.10",

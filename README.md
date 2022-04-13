@@ -29,10 +29,10 @@ Simple Chrome extension LinkedIn (/jobs/view) detail poster to Notion database
 
 - [X] Fix empty field submit
 - [X] Fix form event (submit feedback)
+- [X] Fix Notion children blocks (markdown conversion)
 - [ ] Fix form button disabled state
 - [ ] Add persistent state with local storage
 - [ ] Fix types (remove any, provide streamlined interfaces)
-- [ ] Fix Notion children blocks (markdown conversion)
 - [ ] Active database picker
 - [ ] Dynamic form fields based on selected database and page content
 - [ ] Initial selector and Multiselector fields populated by database

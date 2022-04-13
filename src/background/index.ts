@@ -81,6 +81,7 @@ async function addItem({
           url: link,
         },
       },
+      ...(body && { children: markdownToBlocks(body) }),
       // children: [
       //   ...body.split(/\r?\n/).map(item => ({
       //     object: 'block',

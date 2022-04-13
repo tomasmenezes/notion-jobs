@@ -176,7 +176,7 @@ const Form = ({ data, title, event, submit }: FormProps) => {
               {submit ? 'Submitting...' : 'Submit'}
             </button>
             <button
-              className="inline-flex items-center px-3 py-1.5 mr-2 text-sm font-medium text-center border rounded-lg hover:bg-gray-200 focus:ring-blue-500 focus:border-blue-500 focus:ring-2"
+              className="inline-flex items-center px-3 py-1.5 mr-2 text-sm font-medium text-center border rounded-lg hover:bg-gray-100 focus:ring-blue-500 focus:border-blue-500 focus:ring-2"
               onClick={event.handleReset}
             >
               Reset
