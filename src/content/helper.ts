@@ -14,6 +14,7 @@ interface ClassStructureObject {
   note: string;
   tags: string;
   authUser: boolean;
+  viewPage: boolean;
 }
 
 const baseClassStructure: ClassStructureObject = {
@@ -30,24 +31,42 @@ const baseClassStructure: ClassStructureObject = {
   note: '',
   tags: '',
   authUser: true,
+  viewPage: true,
 };
 
 export const getContentTags = (): ClassStructureObject => {
   const classStructure = { ...baseClassStructure };
   classStructure.authUser = !document.querySelector('[aria-label="Sign in"]');
+  classStructure.viewPage = !!document.baseURI.match(
+    'https://*.linkedin.com/jobs/view/*',
+  );
 
   if (classStructure.authUser) {
-    classStructure.title = '.jobs-unified-top-card h1';
-    classStructure.company = '.jobs-unified-top-card__company-name';
-    classStructure.logo = '.lazy-image';
-    classStructure.body = '.jobs-description-content__text';
-    classStructure.loc = '.jobs-unified-top-card__bullet';
-    classStructure.postTime = '.jobs-unified-top-card__posted-date';
-    classStructure.numApps =
-      '.jobs-unified-top-card__subtitle-secondary-grouping .jobs-unified-top-card__bullet';
-    classStructure.estSalary = '[href="#SALARY"]';
-    classStructure.senLevel = '.jobs-unified-top-card__job-insight';
-    classStructure.tags = '.jobs-unified-top-card__job-insight';
+    if (classStructure.viewPage) {
+      classStructure.title = '.jobs-unified-top-card h1';
+      classStructure.company = '.jobs-unified-top-card__company-name';
+      classStructure.logo = '.lazy-image';
+      classStructure.body = '.jobs-description-content__text';
+      classStructure.loc = '.jobs-unified-top-card__bullet';
+      classStructure.postTime = '.jobs-unified-top-card__posted-date';
+      classStructure.numApps =
+        '.jobs-unified-top-card__subtitle-secondary-grouping .jobs-unified-top-card__bullet';
+      classStructure.estSalary = '[href="#SALARY"]';
+      classStructure.senLevel = '.jobs-unified-top-card__job-insight';
+      classStructure.tags = '.jobs-unified-top-card__job-insight';
+    } else {
+      classStructure.title = '.jobs-unified-top-card__content--two-pane h2';
+      classStructure.company = '.jobs-unified-top-card__company-name';
+      classStructure.logo = '.jobs-search-results-list__list-item--active img';
+      classStructure.body = '.jobs-description-content__text';
+      classStructure.loc = '.jobs-unified-top-card__bullet';
+      classStructure.postTime = '.jobs-unified-top-card__posted-date';
+      classStructure.numApps =
+        '.jobs-unified-top-card__subtitle-secondary-grouping .jobs-unified-top-card__bullet';
+      classStructure.estSalary = '[href="#SALARY"]';
+      classStructure.senLevel = '.jobs-unified-top-card__job-insight';
+      classStructure.tags = '.jobs-unified-top-card__job-insight';
+    }
   } else {
     classStructure.title = '.topcard__title';
     classStructure.company = '.topcard__org-name-link';
