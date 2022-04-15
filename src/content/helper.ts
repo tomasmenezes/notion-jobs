@@ -38,7 +38,7 @@ export const getContentTags = (): ClassStructureObject => {
   const classStructure = { ...baseClassStructure };
   classStructure.authUser = !document.querySelector('[aria-label="Sign in"]');
   classStructure.viewPage = !!document.baseURI.match(
-    'https://*.linkedin.com/jobs/view/*',
+    'https://www.linkedin.com/jobs/view/*',
   );
 
   if (classStructure.authUser) {
@@ -97,11 +97,7 @@ export const getContentData = (
   ))?.innerText.trim();
 
   const logo = <HTMLImageElement>document.querySelector(classStructure.logo);
-  if (!logo.src) {
-    pageData.icon = logo.getAttribute('data-delayed-url') ?? '';
-  } else {
-    pageData.icon = logo.src;
-  }
+  pageData.icon = logo?.src ?? logo?.getAttribute('data-delayed-url') ?? '';
 
   pageData.body =
     (<HTMLElement>document.querySelector(classStructure.body))?.innerHTML
